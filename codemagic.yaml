@@ -22,7 +22,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - tu_correo@gmail.com  # ← Cambia esto por tu correo en el panel
+          - tu_correo@gmail.com
         notify:
           success: true
           failure: true
@@ -38,27 +38,23 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      ios_signing:
-        distribution_type: development
-        bundle_identifier: com.perritoperron.app
+      # Eliminamos ios_signing para evitar requerir cuenta de Apple Developer en Codemagic
     scripts:
       - name: Instalar dependencias
         script: flutter pub get
-      - name: Compilar iOS
+      - name: Compilar y empaquetar IPA sin firma para AltStore
         script: |
           flutter build ios --release --no-codesign
-          cd ios
-          xcodebuild -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -archivePath "$CM_BUILD_DIR/perrito_perron/Runner.xcarchive" \
-            archive
+          cd build/ios/iphoneos
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -r ../../Runner.ipa Payload
     artifacts:
-      - perrito_perron/build/ios/ipa/*.ipa
+      - perrito_perron/build/ios/Runner.ipa
     publishing:
       email:
         recipients:
-          - tu_correo@gmail.com  # ← Cambia esto por tu correo en el panel
+          - tu_correo@gmail.com
         notify:
           success: true
           failure: true
