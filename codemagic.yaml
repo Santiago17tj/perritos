@@ -22,7 +22,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - tu_correo@gmail.com
+          - santiago123565@gmail.com
         notify:
           success: true
           failure: true
@@ -38,7 +38,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      # Eliminamos ios_signing para evitar requerir cuenta de Apple Developer en Codemagic
     scripts:
       - name: Instalar dependencias
         script: flutter pub get
@@ -48,13 +47,13 @@ workflows:
           cd build/ios/iphoneos
           mkdir Payload
           cp -r Runner.app Payload/
-          zip -r ../../Runner.ipa Payload
+          zip -r ../../ios/Runner.ipa Payload
     artifacts:
       - perrito_perron/build/ios/Runner.ipa
     publishing:
       email:
         recipients:
-          - tu_correo@gmail.com
+          - santiago123565@gmail.com
         notify:
           success: true
           failure: true
