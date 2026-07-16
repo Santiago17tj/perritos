@@ -1,0 +1,67 @@
+workflows:
+  # ──────────────────────────────────────────────
+  # WORKFLOW ANDROID — APK de release
+  # ──────────────────────────────────────────────
+  android-release:
+    name: Android APK (Release)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Instalar dependencias
+        script: flutter pub get
+      - name: Analizar código
+        script: flutter analyze --no-fatal-infos
+      - name: Compilar APK
+        script: flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+    publishing:
+      email:
+        recipients:
+          - tu_correo@gmail.com  # ← Cambia esto por tu correo
+        notify:
+          success: true
+          failure: true
+
+  # ──────────────────────────────────────────────
+  # WORKFLOW iOS — IPA para instalar en iPhone
+  # ──────────────────────────────────────────────
+  ios-development:
+    name: iOS IPA (Development - Tu iPhone)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      # ⚠️ IMPORTANTE: Configura estas variables en el panel de Codemagic
+      # Ve a: Tu app → Environment variables
+      # y agrega: APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER,
+      # APP_STORE_CONNECT_PRIVATE_KEY, CERTIFICATE_PRIVATE_KEY
+      ios_signing:
+        distribution_type: development   # "development" para probar en tu iPhone
+        bundle_identifier: com.perritoperron.app
+    scripts:
+      - name: Instalar dependencias
+        script: flutter pub get
+      - name: Compilar iOS
+        script: |
+          flutter build ios --release --no-codesign
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath "$CM_BUILD_DIR/Runner.xcarchive" \
+            archive
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email:
+        recipients:
+          - tu_correo@gmail.com  # ← Cambia esto por tu correo
+        notify:
+          success: true
+          failure: true
