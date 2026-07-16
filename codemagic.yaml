@@ -5,6 +5,7 @@ workflows:
   android-release:
     name: Android APK (Release)
     max_build_duration: 60
+    working_directory: perrito_perron
     environment:
       flutter: stable
       xcode: latest
@@ -17,11 +18,11 @@ workflows:
       - name: Compilar APK
         script: flutter build apk --release
     artifacts:
-      - build/app/outputs/flutter-apk/app-release.apk
+      - perrito_perron/build/app/outputs/flutter-apk/app-release.apk
     publishing:
       email:
         recipients:
-          - tu_correo@gmail.com  # ← Cambia esto por tu correo
+          - tu_correo@gmail.com  # ← Cambia esto por tu correo en el panel
         notify:
           success: true
           failure: true
@@ -32,16 +33,13 @@ workflows:
   ios-development:
     name: iOS IPA (Development - Tu iPhone)
     max_build_duration: 60
+    working_directory: perrito_perron
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
-      # ⚠️ IMPORTANTE: Configura estas variables en el panel de Codemagic
-      # Ve a: Tu app → Environment variables
-      # y agrega: APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER,
-      # APP_STORE_CONNECT_PRIVATE_KEY, CERTIFICATE_PRIVATE_KEY
       ios_signing:
-        distribution_type: development   # "development" para probar en tu iPhone
+        distribution_type: development
         bundle_identifier: com.perritoperron.app
     scripts:
       - name: Instalar dependencias
@@ -53,15 +51,14 @@ workflows:
           xcodebuild -workspace Runner.xcworkspace \
             -scheme Runner \
             -configuration Release \
-            -archivePath "$CM_BUILD_DIR/Runner.xcarchive" \
+            -archivePath "$CM_BUILD_DIR/perrito_perron/Runner.xcarchive" \
             archive
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - perrito_perron/build/ios/ipa/*.ipa
     publishing:
       email:
         recipients:
-          - tu_correo@gmail.com  # ← Cambia esto por tu correo
+          - tu_correo@gmail.com  # ← Cambia esto por tu correo en el panel
         notify:
           success: true
           failure: true
